@@ -10,28 +10,25 @@ class Tachy:
         self.engine_on = False
         self.tach_pin = Pin(5, Pin.IN)  # GPIO 5 D1 on WEMOS Board
 
-        # self.tach_pin.irq(Pin.IRQ_RISING, handler=lambda x: self.count += 1)
-        self.timer = Timer(-1)
-        self.timer.init(period=1000, mode=Timer.PERIODIC, callback=self.total)
-
-    def total(self):
+    def update(self):
         try:
-            self.pulse_us = time_pulse_us(self.tach_pin, 1, timout_us=100000)
+            while self.tach_pin.value()==1:
+                pass
+            self.pulse_us = time_pulse_us(self.tach_pin, 1, 100000)
+            self.RPM = 5000000 / self.pulse_us
+            self.engine_on = True
         except:
             self.engine_on = False
-        self.RPM = 5000000/self.pulse_us
-        if self.RPM > 0:
-            self.engine_on = True
-        else:
-            self.engine_on = False
+            self.RPM = 0
 
     @property
     def output(self):
-        return #TODO RPM(self.RPM).msg ## output sentence
+        self.update()
+        return self.RPM #TODO RPM(self.RPM).msg ## output sentence
 
-    #TODO alternative function usinge machine.time_pulse_us less reliant on interupts??
 a=Tachy()
 
 while 1:
-    print(a.RPM)
+    print(a.output)
     sleep(0.5)
+

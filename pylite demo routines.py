@@ -8,7 +8,7 @@ ch2 = timer.channel(4, pyb.Timer.PWM, pin=pyb.Pin.board.X2, pulse_width_precent=
 #routine to test seatalk bitbang
 
 import pyb
-stream = pyb.UART(4, 4800, bits=9)
+stream = pyb.UART(2, 4800, bits=9)
 while True:
     if stream.any():
         d = stream.read(2)
